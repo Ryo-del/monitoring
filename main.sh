@@ -5,10 +5,14 @@ disk_message=""
 cpu_message=""
 temp_message=""
 ram_message=""
+maxdisk=50
+maxcpu=50
+maxtemp=60
+maxram=50
 
 # Проверка диска
 disk=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%')
-if [ "$disk" -gt 90 ]; then
+if [ "$disk" -gt "$maxdisk" ]; then
     disk_message="⚠️ Warning: Disk space is low! ($disk% used)"
     warning=true
 else
@@ -17,7 +21,7 @@ fi
 
 # Проверка CPU
 cpu=$(mpstat 1 1 | awk 'END{printf "%.0f", 100 - $NF}' 2>/dev/null || echo "0")
-if [ -z "$cpu" ] || [ "$cpu" -gt 50 ]; then 
+if [ -z "$cpu" ] || [ "$cpu" -gt "$maxcpu" ]; then 
     cpu_message="⚠️ Warning: CPU overloaded ($cpu% used)"
     warning=true
 else
@@ -28,7 +32,7 @@ fi
 temp="N/A"
 if [ -f "/sys/class/thermal/thermal_zone0/temp" ]; then
     temp=$(($(cat /sys/class/thermal/thermal_zone0/temp)/1000))
-    if [ "$temp" -gt 70 ]; then  
+    if [ "$temp" -gt "$maxtemp" ]; then  
         temp_message="⚠️ Warning: Temperature: $temp °C"
         warning=true
     else
@@ -43,7 +47,7 @@ ram_usage=$(LANG=C free 2>/dev/null | awk '/Mem/{printf "%.0f", $3/$2*100}' || e
 if [ -z "$ram_usage" ]; then
     ram_message="❌ Error: Could not determine RAM usage"
 else
-    if [ "$ram_usage" -gt 80 ]; then  
+    if [ "$ram_usage" -gt "$maxram" ]; then  
         ram_message="⚠️ High RAM usage: $ram_usage%"
         warning=true
     else
