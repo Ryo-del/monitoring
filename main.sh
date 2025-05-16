@@ -17,7 +17,7 @@ fi
 
 # Проверка CPU
 cpu=$(mpstat 1 1 | awk 'END{printf "%.0f", 100 - $NF}' 2>/dev/null || echo "0")
-if [ -z "$cpu" ] || [ "$cpu" -gt 20 ]; then 
+if [ -z "$cpu" ] || [ "$cpu" -gt 50 ]; then 
     cpu_message="⚠️ Warning: CPU overloaded ($cpu% used)"
     warning=true
 else
