@@ -6,13 +6,12 @@ cpu_message=""
 temp_message=""
 ram_message=""
 
-# Установка пороговых значений (измените по своему усмотрению)
-maxdisk=90      # было 50 - слишком низкий порог для диска
-maxcpu=50       # было 50 - 50% это нормальная загрузка CPU
-maxtemp=70      # нормально для большинства систем
-maxram=80       # было 50 - 50% использования RAM это норма
 
-# Проверка диска (исправлено для обработки ошибок)
+maxdisk=90      
+maxcpu=50      
+maxtemp=70      
+maxram=80      
+
 disk=$(df -h / | awk 'NR==2 {print $5}' | tr -d '%' 2>/dev/null)
 if [[ -z "$disk" ]]; then
     disk_message="❌ Error: Could not get disk usage"
@@ -23,10 +22,10 @@ else
     disk_message="✅ Disk - OK ($disk% used)"
 fi
 
-# Проверка CPU (полностью переработано)
+
 cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}' | cut -d. -f1)
 if [[ -z "$cpu_usage" ]]; then
-    # Альтернативный метод, если первый не сработал
+
     cpu_usage=$(mpstat 1 1 | awk 'END{printf "%.0f", 100 - $NF}' 2>/dev/null || echo "0")
 fi
 
@@ -39,7 +38,7 @@ else
     cpu_message="✅ CPU - OK ($cpu_usage% used)"
 fi
 
-# Проверка температуры (добавлены проверки)
+
 temp="N/A"
 temp_file="/sys/class/thermal/thermal_zone0/temp"
 if [[ -f "$temp_file" ]]; then
@@ -59,7 +58,7 @@ else
     temp_message="❌ Temperature sensor not found"
 fi
 
-# Проверка RAM (оптимизировано)
+
 ram_usage=$(free -m | awk '/Mem:/ {printf "%.0f", $3/$2*100}' 2>/dev/null)
 if [[ -z "$ram_usage" ]]; then
     ram_message="❌ Error: Could not determine RAM usage"
@@ -72,7 +71,7 @@ else
     fi
 fi
 
-# Вывод результатов (форматирование улучшено)
+
 if [[ "$warning" = true ]]; then
     echo -e "\n=== SYSTEM STATUS REPORT ==="
     echo "-------------------------"
