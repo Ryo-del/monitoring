@@ -8,7 +8,7 @@ import (
 
 func main() {
 	// Initialize bot with your token
-	bot, err := tgbotapi.NewBotAPI("7747181762:AAEfarc6qwn455UFadykr-MP2jmnnbpu_Wc")
+	bot, err := tgbotapi.NewBotAPI("TOKEN")
 	if err != nil {
 		log.Panic(err)
 	}
